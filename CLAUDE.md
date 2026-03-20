@@ -1,5 +1,8 @@
 # Fable
 
+- **GitHub**: https://github.com/Oldcircle/fable
+- **本地路径**: `/Users/yb/Opensource/projects/ai/fable`
+
 ## 概述
 
 Fable 是一个 AI 驱动的互动叙事引擎，区别于 SillyTavern / RisuAI 等聊天前端。核心差异：以 **故事图（Story Graph）** 而非消息列表为数据模型，支持场景结构、角色状态演化、世界持久化、剧情分支回溯。
