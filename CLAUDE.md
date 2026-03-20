@@ -33,71 +33,84 @@ Fable 是一个 AI 驱动的互动叙事引擎，区别于 SillyTavern / RisuAI 
 
 ## 项目结构
 
+> ✅ = 已实现，📋 = 已有类型/接口但未实现逻辑，🔲 = 计划中
+
 ```
 src/
-├── types/                  # 类型定义
-│   ├── story.ts            # Story, Chapter, Scene, Event
-│   ├── character.ts        # Character (identity + state)
-│   ├── world.ts            # WorldState, Location, Faction
-│   ├── plot.ts             # PlotGraph, Branch, Choice
-│   ├── preset.ts           # LLM 预设
-│   └── compat.ts           # ST 兼容格式类型
+├── types/                      # ✅ 类型定义（9 个文件，完整覆盖）
+│   ├── story.ts                # Story, Chapter, Scene, SceneTransition
+│   ├── character.ts            # Character (identity + state + knowledge)
+│   ├── world.ts                # WorldState, Location, Faction
+│   ├── plot.ts                 # PlotGraph, PlotNode, PlotEdge
+│   ├── events.ts               # StoryEvent 联合类型（8 种事件）
+│   ├── state-change.ts         # StateChange 联合类型（8 种变更）
+│   ├── lore.ts                 # LoreEntry
+│   ├── preset.ts               # LLMConfig, DirectorPreset
+│   ├── adapter.ts              # LLMAdapter 接口
+│   └── compat.ts               # ST 角色卡/世界书/预设原始格式
 │
-├── engine/                 # 叙事引擎核心（纯逻辑，无 UI 依赖）
-│   ├── scene-manager.ts    # 场景编排与推进
-│   ├── character-agent.ts  # 角色状态管理与行为决策
-│   ├── world-state.ts      # 世界状态持久化与查询
-│   ├── plot-graph.ts       # 剧情分支图管理
-│   ├── prompt-builder.ts   # 精确 prompt 组装（非全量拼接）
-│   └── memory/             # 角色记忆系统
-│       ├── knowledge.ts    # 角色知识图谱
-│       └── retrieval.ts    # 记忆检索（向量 + 关键词）
+├── engine/                     # ✅ 叙事引擎核心（纯逻辑，169 个测试）
+│   ├── defaults.ts             # ✅ 默认值工厂函数
+│   ├── scene-manager.ts        # ✅ 场景编排与推进
+│   ├── character-agent.ts      # ✅ 角色状态管理
+│   ├── world-state.ts          # ✅ 世界状态管理
+│   ├── plot-graph.ts           # ✅ 剧情分支图操作
+│   ├── prompt-builder.ts       # ✅ 精确 prompt 组装
+│   ├── response-parser.ts      # ✅ LLM 响应 → StoryEvent 解析
+│   ├── generate.ts             # ✅ 生成编排器（prompt → LLM → parse → append）
+│   └── memory/                 # 🔲 角色记忆系统（计划中）
 │
-├── adapters/               # 外部服务适配
-│   ├── llm/                # LLM API 适配器
-│   │   ├── openai.ts       # OpenAI 兼容 (DeepSeek/Groq/OpenRouter/Ollama)
-│   │   ├── anthropic.ts    # Claude API
-│   │   └── google.ts       # Gemini API
-│   └── image/              # 图像生成适配（后期）
-│       └── comfyui.ts
+├── adapters/                   # 外部服务适配
+│   └── llm/
+│       └── openai-compatible.ts # ✅ OpenAI 兼容（GPT/DeepSeek/Groq/OpenRouter/Ollama）
 │
-├── compat/                 # SillyTavern 兼容层
-│   ├── import-character.ts # 角色卡导入 (PNG/JSON, V2/V3)
-│   ├── import-world.ts     # 世界书导入
-│   ├── import-preset.ts    # 预设导入
-│   ├── macro-translator.ts # ST 宏翻译 ({{char}} → 内部变量)
-│   └── export.ts           # 导出为 ST 兼容格式
+├── data/                       # 🔲 静态数据定义（待创建）
+│   └── providers.ts            # 🔲 内置 LLM Provider + Model 定义
 │
-├── stores/                 # Svelte 状态管理
-│   ├── story.svelte.ts     # 当前故事状态
-│   ├── characters.svelte.ts
-│   ├── world.svelte.ts
-│   └── settings.svelte.ts
+├── compat/                     # ST 兼容层
+│   ├── import-character.ts     # ✅ 角色卡导入 (PNG/JSON, V2/V3)
+│   ├── import-world.ts         # ✅ 世界书导入 + 语义分类
+│   ├── macro-translator.ts     # ✅ ST 宏翻译 + 反向翻译
+│   ├── import-preset.ts        # 🔲 预设导入
+│   └── export.ts               # 🔲 导出为 ST 角色卡 PNG
 │
-├── db/                     # 数据持久化
-│   └── index.ts            # Dexie.js schema
+├── stores/                     # Svelte 状态管理
+│   ├── story.svelte.ts         # ✅ 故事 CRUD（但游玩中未自动保存）
+│   └── settings.svelte.ts      # ✅ 设置（但未持久化到 IndexedDB）
 │
-├── lib/                    # Svelte UI 组件
-│   ├── SceneView/          # 场景渲染（混合排版）
-│   ├── PlotGraph/          # 剧情分支可视化
-│   ├── CharacterPanel/     # 角色状态面板
-│   ├── WorldMap/           # 世界状态概览
-│   ├── Timeline/           # 时间线视图
-│   ├── Editor/             # 场景/角色编辑器
-│   └── Common/             # 通用 UI 组件
+├── db/                         # 数据持久化
+│   ├── index.ts                # ✅ Dexie.js schema
+│   └── serialization.ts        # ✅ Map/Set 序列化
 │
-├── pages/                  # 页面级组件
-│   ├── Play.svelte         # 主游玩界面
-│   ├── StoryOverview.svelte # 故事全局视图
-│   ├── CharacterEditor.svelte
-│   ├── WorldEditor.svelte
-│   ├── Settings.svelte
-│   └── Import.svelte       # ST 资产导入
+├── lib/                        # Svelte UI 组件
+│   ├── SceneView/
+│   │   ├── SceneView.svelte    # ✅ 事件列表渲染
+│   │   ├── EventRenderer.svelte # ✅ 按类型分渲染
+│   │   └── InputBar.svelte     # ✅ 对话/动作输入
+│   └── Common/
+│       └── Sidebar.svelte      # ✅ 侧栏导航
+│
+├── pages/                      # 页面
+│   ├── Play.svelte             # ✅ 主游玩界面（基础版，配置体验待优化）
+│   ├── StoryOverview.svelte    # 🔲 占位
+│   ├── CharacterEditor.svelte  # 🔲 占位
+│   ├── WorldEditor.svelte      # 🔲 占位
+│   ├── Settings.svelte         # 🔲 占位
+│   └── Import.svelte           # 🔲 占位
+│
+├── test-utils/
+│   └── fixtures.ts             # ✅ 测试夹具
 │
 └── utils/
-    ├── png-meta.ts         # PNG tEXt chunk 读写
-    └── format.ts           # 文本格式化工具
+    ├── id.ts                   # ✅ ID 生成
+    ├── format.ts               # ✅ 错误脱敏
+    └── png-meta.ts             # ✅ PNG tEXt chunk 读写
 ```
+
+## 调试用测试数据
+
+ST 角色卡和世界书测试数据位于 `~/Opensource/projects/ai/storyforge/SillyTavern-Backup/`。
+可用于端到端验证 compat/ 导入功能。
 
 ## 开发命令
 
