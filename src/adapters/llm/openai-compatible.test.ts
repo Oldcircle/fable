@@ -4,6 +4,7 @@ import type { LLMConfig } from '../../types/preset'
 
 const mockConfig: LLMConfig = {
   provider: 'openai-compatible',
+  providerId: 'openai',
   model: 'gpt-4',
   endpoint: 'https://api.example.com/v1',
   apiKey: 'test-key',

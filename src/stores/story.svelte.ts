@@ -115,6 +115,10 @@ export function useStoryStore() {
       return null
     },
 
+    setCurrent(s: Story): void {
+      state.current = s
+    },
+
     async deleteStory(id: string): Promise<void> {
       await db.stories.delete(id)
       if (state.current?.id === id) {

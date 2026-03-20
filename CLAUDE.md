@@ -64,8 +64,8 @@ src/
 │   └── llm/
 │       └── openai-compatible.ts # ✅ OpenAI 兼容（GPT/DeepSeek/Groq/OpenRouter/Ollama）
 │
-├── data/                       # 🔲 静态数据定义（待创建）
-│   └── providers.ts            # 🔲 内置 LLM Provider + Model 定义
+├── data/                       # ✅ 静态数据定义
+│   └── providers.ts            # ✅ 内置 LLM Provider + Model 定义（7 个 provider）
 │
 ├── compat/                     # ST 兼容层
 │   ├── import-character.ts     # ✅ 角色卡导入 (PNG/JSON, V2/V3)
@@ -75,8 +75,8 @@ src/
 │   └── export.ts               # 🔲 导出为 ST 角色卡 PNG
 │
 ├── stores/                     # Svelte 状态管理
-│   ├── story.svelte.ts         # ✅ 故事 CRUD（但游玩中未自动保存）
-│   └── settings.svelte.ts      # ✅ 设置（但未持久化到 IndexedDB）
+│   ├── story.svelte.ts         # ✅ 故事 CRUD + 游玩中自动保存
+│   └── settings.svelte.ts      # ✅ 设置持久化（IndexedDB 读写）
 │
 ├── db/                         # 数据持久化
 │   ├── index.ts                # ✅ Dexie.js schema
@@ -91,12 +91,12 @@ src/
 │       └── Sidebar.svelte      # ✅ 侧栏导航
 │
 ├── pages/                      # 页面
-│   ├── Play.svelte             # ✅ 主游玩界面（基础版，配置体验待优化）
-│   ├── StoryOverview.svelte    # 🔲 占位
-│   ├── CharacterEditor.svelte  # 🔲 占位
-│   ├── WorldEditor.svelte      # 🔲 占位
-│   ├── Settings.svelte         # 🔲 占位
-│   └── Import.svelte           # 🔲 占位
+│   ├── Play.svelte             # ✅ 主游玩界面（Provider 下拉 + 自动保存 + 故事恢复）
+│   ├── StoryOverview.svelte    # ✅ 故事概览（时间线 + 角色 + 地点 + 知识库）
+│   ├── CharacterEditor.svelte  # ✅ 角色编辑（身份字段编辑 + 保存）
+│   ├── WorldEditor.svelte      # ✅ 世界编辑（地点 CRUD + 知识条目管理）
+│   ├── Settings.svelte         # ✅ Provider + 采样参数配置
+│   └── Import.svelte           # ✅ 导入向导（拖入 PNG/JSON，预览，确认导入）
 │
 ├── test-utils/
 │   └── fixtures.ts             # ✅ 测试夹具

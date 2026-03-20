@@ -1,5 +1,6 @@
 export interface LLMConfig {
   provider: string
+  providerId: string
   model: string
   endpoint?: string
   apiKey?: string

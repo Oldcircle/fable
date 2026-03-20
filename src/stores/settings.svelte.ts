@@ -5,12 +5,14 @@ interface SettingsState {
   llmConfig: LLMConfig
   playerName: string
   language: string
+  loaded: boolean
 }
 
 const defaultLLMConfig: LLMConfig = {
   provider: 'openai-compatible',
-  model: '',
-  endpoint: '',
+  providerId: 'deepseek',
+  model: 'deepseek-chat',
+  endpoint: 'https://api.deepseek.com/v1',
   apiKey: '',
   temperature: 0.8,
   topP: 0.95,
@@ -24,6 +26,7 @@ let state = $state<SettingsState>({
   llmConfig: { ...defaultLLMConfig },
   playerName: '旅者',
   language: 'zh-CN',
+  loaded: false,
 })
 
 async function persist(): Promise<void> {
@@ -37,6 +40,8 @@ export function useSettingsStore() {
     get llmConfig() { return state.llmConfig },
     get playerName() { return state.playerName },
     get language() { return state.language },
+    get loaded() { return state.loaded },
+    get isConfigured() { return !!state.llmConfig.model && !!state.llmConfig.endpoint },
 
     async load(): Promise<void> {
       const llmRecord = await db.settings.get('llmConfig')
@@ -47,6 +52,7 @@ export function useSettingsStore() {
       if (nameRecord) state.playerName = nameRecord.value
       const langRecord = await db.settings.get('language')
       if (langRecord) state.language = langRecord.value
+      state.loaded = true
     },
 
     async updateLLMConfig(updates: Partial<LLMConfig>): Promise<void> {
