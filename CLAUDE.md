@@ -1,7 +1,7 @@
 # Fable
 
 - **GitHub**: https://github.com/Oldcircle/fable
-- **本地路径**: `/Users/yb/Opensource/projects/ai/fable`
+- **本地路径**: `/Users/yb/OpenSource/projects/ai/fable`
 
 ## 概述
 
@@ -57,12 +57,15 @@ src/
 │   ├── plot-graph.ts           # ✅ 剧情分支图操作
 │   ├── prompt-builder.ts       # ✅ 精确 prompt 组装
 │   ├── response-parser.ts      # ✅ LLM 响应 → StoryEvent 解析
-│   ├── generate.ts             # ✅ 生成编排器（prompt → LLM → parse → append）
+│   ├── generate.ts             # ✅ 生成编排器（prompt → LLM → parse → apply → append）
+│   ├── state-updater.ts        # ✅ StateChange → 角色/世界/剧情图状态更新
 │   └── memory/                 # 🔲 角色记忆系统（计划中）
 │
-├── adapters/                   # 外部服务适配
+├── adapters/                   # 外部服务适配（参考 ST：3 种 API 格式覆盖所有 provider）
 │   └── llm/
-│       └── openai-compatible.ts # ✅ OpenAI 兼容（GPT/DeepSeek/Groq/OpenRouter/Ollama）
+│       ├── openai-compatible.ts # ✅ OpenAI 兼容（覆盖 14+ provider）
+│       ├── anthropic.ts         # 🔲 Anthropic Messages API（Claude 原生）
+│       └── google-gemini.ts     # 🔲 Google Gemini API
 │
 ├── data/                       # ✅ 静态数据定义
 │   └── providers.ts            # ✅ 内置 LLM Provider + Model 定义（7 个 provider）

@@ -13,12 +13,31 @@
 | 0 | 项目脚手架（Svelte 5 + Vite 8 + Tailwind 4） | ✅ 已完成（Tauri/CI 延后） |
 | 1 | 数据模型与存储 | ✅ 已完成 |
 | 2 | ST 兼容层（角色卡/世界书/预设导入） | ⚠️ 70%（预设导入/导出未做） |
-| 3 | 叙事引擎核心 | ⚠️ 80%（StateUpdater 未做） |
-| 4 | LLM 适配 | ⚠️ 55%（Provider 数据驱动已完成，Claude/Gemini 适配器未做） |
+| 3 | 叙事引擎核心 | ⚠️ 90%（StateUpdater 已完成，Lore 注入优化未做） |
+| 4 | LLM 适配 | ✅ 95%（3 种适配器 + 15 个 provider 全部完成） |
 | 5 | 前端 UI | ⚠️ 70%（所有页面基础版完成） |
 | 6 | 高级功能 | ❌ 未开始 |
 
 ## 本次完成
+
+### LLM 适配器补全（2026-03-21）
+1. ✅ **Anthropic Messages 适配器** — `adapters/llm/anthropic.ts`
+   - x-api-key 认证、system 字段分离、SSE content_block_delta 流式解析
+   - 连续同角色消息自动合并（满足 Anthropic 交替要求）
+2. ✅ **Google Gemini 适配器** — `adapters/llm/google-gemini.ts`
+   - API key query param、contents[] 格式、assistant→model 角色映射
+   - systemInstruction 分离、safety_settings 全关、streamGenerateContent+alt=sse
+3. ✅ **Provider 数据扩展** — 从 7 个扩展到 15 个 provider
+   - 新增：Anthropic / Gemini / Mistral / Perplexity / xAI / Together / Fireworks / Moonshot
+   - 新增 `adapterType` 字段，自动选择正确适配器
+4. ✅ **11 个新测试用例**（Anthropic 5 + Gemini 6）
+
+### 引擎补全（2026-03-21）
+1. ✅ **StateUpdater** — 实现 `engine/state-updater.ts`，支持全部 8 种 StateChange 类型
+   - relationship（信任值调整）、character_state（心情/位置/状态）、world_flag、location_state
+   - inventory（物品增删）、goal（目标状态）、knowledge（知识+传闻）、faction（阵营成员/关系）
+2. ✅ **集成到生成流程** — `generate.ts` 在解析 LLM 响应后自动应用状态变更
+3. ✅ **25 个测试用例**，全部通过
 
 ### P0 修复（2026-03-20）
 1. ~~LLM 配置体验差~~ → ✅ Provider 下拉 → 自动填充 endpoint → Model 下拉
@@ -42,12 +61,13 @@
 - [ ] 角色面板侧栏：游玩时显示在场角色状态
 
 ### 引擎补全
-- [ ] StateUpdater（应用 LLM 返回的 StateChange 到角色/世界/剧情图）
+- [x] StateUpdater（应用 LLM 返回的 StateChange 到角色/世界/剧情图）
 - [ ] Lore 注入优化（概率/分组）
 
 ### 适配器
-- [ ] Claude API 适配器
-- [ ] Gemini API 适配器
+- [x] Anthropic Messages 适配器（Claude 原生 API）
+- [x] Google Gemini 适配器（contents[] 格式）
+- [x] Provider 数据扩展（15 个 provider）
 
 ### 高级功能
 - [ ] 分支回溯
@@ -77,7 +97,7 @@
 
 ## 测试统计
 
-- **16 个测试文件，169 个测试用例，全部通过**
+- **19 个测试文件，205 个测试用例，全部通过**
 - 类型检查 346 文件 0 错误 0 警告
 - Oxlint 59 文件 0 warnings 0 errors
 

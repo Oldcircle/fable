@@ -4,6 +4,7 @@ import type { LLMAdapter } from '../types/adapter'
 import { buildScenePrompt } from './prompt-builder'
 import { parseStoryboardResponse } from './response-parser'
 import { appendGeneratedEvents } from './scene-manager'
+import { applyStateChanges } from './state-updater'
 
 export type GenerateResult =
   | { ok: true; events: StoryEvent[] }
@@ -48,6 +49,9 @@ export async function generateNextEvents(
   // 4. Append events to scene
   appendGeneratedEvents(scene, parseResult.value)
 
+  // 5. Apply state changes from events to story
+  applyStateChanges(story, parseResult.value)
+
   return { ok: true, events: parseResult.value }
 }
 
@@ -86,5 +90,9 @@ export async function generateNextEventsStreaming(
   }
 
   appendGeneratedEvents(scene, parseResult.value)
+
+  // Apply state changes from events to story
+  applyStateChanges(story, parseResult.value)
+
   return { ok: true, events: parseResult.value }
 }
